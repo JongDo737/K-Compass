@@ -1,0 +1,77 @@
+* {
+	margin: 0;
+	padding: 0 10%;
+}
+
+body {background: -moz-linear-gradient(-45deg, #183850 0, #183850 25%, #192C46 50%, #22254C 75%, #22254C 100%);
+	background: -webkit-linear-gradient(-45deg, #183850 0, #183850 25%, #192C46 50%, #22254C 75%, #22254C 100%);
+	background-repeat: no-repeat;
+  background-attachment: fixed;
+    display: flex;
+    height: 80vh;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+.imgContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 100px;
+}
+.bot {
+    width: 400px;
+}
+p {
+	position: relative;
+    left: 300px;
+	max-width: 30em;
+	
+	background-color: #fff;
+	padding: 1.125em 1.5em;
+	font-size: 1.25em;
+	border-radius: 1rem;
+    box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+}
+p::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 100%; /* top에서 bottom으로 수정 */
+    left: 1.5em;
+    border: .75rem solid transparent;
+    border-bottom: none; /* border-top에서 border-bottom으로 수정 */
+    border-top-color: #fff; /* border-bottom-color에서 border-top-color로 수정 */
+    filter: drop-shadow(0 0.0625rem 0.0625rem rgba(0, 0, 0, .1)); /* filter 값을 변경하지 않음 */
+  }
+
+
+#output{
+	font-family: sans-serif;
+	color: #323330;
+	font-size:  1.5em;
+}
+#container {
+	font-family: sans-serif;
+	text-align: center;
+	color: #323330;
+}
+
+
+input {
+    background-color: #eee;
+    border: none;
+    font-family: sans-serif;
+    color: #000;
+    padding: 10px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 30px;
+    width: 500px;
+    margin-top: 200px;
+
+}

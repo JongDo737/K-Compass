@@ -1,0 +1,248 @@
+/* Create the animation */
+
+html, body {
+}
+body {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  color: #424949;
+  background-color: #ECF0F1;
+  padding: 50px 25px 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+}
+h1 {
+  text-align: center;
+  height: 38px;
+  margin: 30px 0px;
+  font-size: 3em;
+}
+h1 span {
+  white-space: normal;
+}
+.flex-parent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.input-flex-container {
+  width: 100%;
+  margin-top: 500px;
+  display: flex;
+  justify-content: space-around;
+  gap: 100px;
+  align-items: center;
+  width: calc(0.8 * 100vw);
+  height: 100px;
+  position: relative;
+  z-index: 0;
+}
+.input {
+  width: 40px;
+  height: 40px;
+  background-color: #2C3E50;
+  position: relative;
+  border-radius: 50%;
+  
+}
+.input:hover {
+  cursor: pointer;
+}
+.main_title {
+  font-size: 0.5em;
+}
+/* Apply the animation to the element */
+.input img {
+    width: 300px;
+    height: 367px;
+    position: relative;
+    bottom: 450px;
+    right: 130px;
+    box-shadow: 5px 5px 5px 5px gray;
+  /* 3 seconds duration, ease-out timing */
+  }
+  @keyframes slideUp {
+    0% {
+      transform: translateY(150px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+  }
+  #input1 {
+    animation: slideUp 1s ease-out; 
+  }
+  #input2 {
+    animation: slideUp 2s ease-out; 
+  }
+  #input3 {
+    animation: slideUp 3s ease-out; 
+  }
+  #input4 {
+    animation: slideUp 4s ease-out; 
+  }
+.input::before, .input::after {
+  content: '';
+  display: block;
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #2C3E50;
+  width: calc(0.8 * 100vw / 20);
+  height: 5px;
+  max-width: 1000px / 20;
+}
+.input::before {
+  left: calc(-0.8 * 100vw / 20 + 25px / 2);
+}
+.input::after {
+  right: calc(-0.8 * 100vw / 20 + 25px / 2);
+}
+.input.active {
+  background-color: #2C3E50;
+}
+.input.active::before {
+  background-color: #2C3E50;
+}
+.input.active::after {
+  background-color: #AEB6BF;
+}
+.input.active span {
+  font-weight: 700;
+}
+.input.active span::before {
+  font-size: 13px;
+}
+.input.active span::after {
+  font-size: 15px;
+}
+.input.active ~ .input {
+  background-color: #AEB6BF;
+}
+.input.active ~ .input::before, .input.active ~ .input::after {
+  background-color: #AEB6BF;
+}
+.input span {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+}
+.input span::before, .input span::after {
+  visibility: visible;
+  position: absolute;
+  left: 50%;
+}
+.input span::after {
+  content: attr(data-year);
+  top: 25px;
+  transform: translateX(-40%);
+  font-size: 14px;
+  width: 100px;
+}
+.input span::before {
+  content: attr(data-info);
+  top: -65px;
+  width: 70px;
+  transform: translateX(-5px) rotateZ(-45deg);
+  font-size: 12px;
+  text-indent: -10px;
+}
+.description-flex-container {
+  width: calc(0.8 * 100vw);
+  font-weight: 400;
+  font-size: 22px;
+  margin-top: 100px;
+  max-width: 1000px;
+}
+.description-flex-container p {
+  margin-top: 0;
+  display: none;
+}
+.description-flex-container p.active {
+  display: block;
+}
+@media (min-width: 1000px / 0.8) {
+  .input::before {
+    left: calc(-(1000px / 20) + 25px / 2);
+  }
+  .input::after {
+    right: calc(-(1000px / 20) + 25px / 2);
+  }
+}
+@media (max-width: 850px) {
+  .input {
+    width: 17px;
+    height: 17px;
+  }
+  .input::before, .input::after {
+    height: 3px;
+  }
+  .input::before {
+    left: calc(-0.8 * 100vw / 20 + 17px / 2);
+  }
+  .input::after {
+    right: calc(-0.8 * 100vw / 20 + 17px / 2);
+  }
+}
+@media (max-width: 600px) {
+  .flex-parent {
+    justify-content: initial;
+  }
+  .input-flex-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    margin-top: 15vh;
+  }
+  .input {
+    width: 60px;
+    height: 60px;
+    margin: 0 10px 50px;
+    background-color: #AEB6BF;
+  }
+  .input::before, .input::after {
+    content: none;
+  }
+  .input span {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .input span::before {
+    top: calc(100% + 5px);
+    transform: translateX(-50%);
+    text-indent: 0;
+    text-align: center;
+  }
+  .input span::after {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #ECF0F1;
+  }
+  .description-flex-container {
+    margin-top: 0px;
+    width: 100%;
+  }
+  .description-flex-container p {
+    position: relative;
+    right: 300px;
+  }
+}
+@media (max-width: 400px) {
+  body {
+    min-height: 950px; /*just so our links won't get in the way of our content*/
+  }
+}
