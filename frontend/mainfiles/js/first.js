@@ -1,5 +1,8 @@
-const data = location.href.split('?')[1];
-const decodedData = JSON.parse(decodeURIComponent(data));
+
+const decodedData = JSON.parse(decodeURIComponent(localStorage.getItem('encodedData')));
+const test = document.querySelector('.text'); 
+console.log(decodeURIComponent(localStorage.getItem('encodedData')));
+alert(decodedData);
 const list = document.querySelector('.card-grid');
 var cardList;
 var dataList = [];
@@ -16,11 +19,7 @@ function showInfo() {
   cardList = document.querySelectorAll('.card');
   for(let i=0;i <cardList.length; i++) {
     cardList[i].onclick = () => {
-      localStorage.setItem("dataList", dataList[i]);
-      localStorage.setItem("imgList", imgList[i]);
-      localStorage.setItem("rateList", rateList[i]);
-      localStorage.setItem("reasonList", reasonList[i]);
-      location.href = `../travel.html`
+      alert(dataList[i]+dataList.length);
     }
   }
 }
@@ -28,15 +27,13 @@ function getForums(forumsList) {
 	let forumsHtml = ``;
   let i = 0;
 	for (let pet of forumsList) {
-    dataList[i] = pet.Tourist_destination
-    imgList[i] = pet.image_link;
-    rateList[i] = pet.score;
-    reasonList[i] = pet.reason;
+    alert(pet.레스토랑명 + i);
+    dataList[i] = pet.Restaurant
 		forumsHtml += `
       <a class="card" >
         <div class="card__background" style="background-image: url(${pet.image_link})"></div>
         <div class="card__content">
-          <h3 class="card__heading">${pet.Tourist_destination}</h3>
+          <h3 class="card__heading">${pet.Restaurant}</h3>
         </div>
       </a>
 		`;
@@ -44,7 +41,13 @@ function getForums(forumsList) {
 	}
 	return forumsHtml;
 }
+
 showInfo();
+
+
+
+
+
 $(function () {
   $("body div").fadeIn(500, function () {
       $(this).animate({
@@ -58,7 +61,7 @@ $(function () {
           "opacity": "0",
           "top": "10px"
       },500, function () {
-          document.location.href = "../travel.html";
+          // document.location.href = "../travel.html";
       });
       
       return false;

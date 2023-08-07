@@ -5,7 +5,7 @@ var output = document.getElementById('output');
 const imgElement = document.querySelector('.bot');
 const dateContainer = document.querySelector('.dateContainer');
 const inputContainer = document.querySelector('.inputContainer');
-    
+localStorage.clear();
 typeWriter(question,0)
 
 var nationality = '';
@@ -121,40 +121,20 @@ function print(){
               "Period: " + period;
 
   alert(message);
-  restaurantLoad();
+  localStorage.setItem("nationality",nationality);
+  localStorage.setItem("choice",choice);
+  localStorage.setItem("age",age);
+  localStorage.setItem("gender",gender);
+  localStorage.setItem("companion",companion);
+  localStorage.setItem("requirements",requirements);
+  localStorage.setItem("period",period);
+  location.href = '../mainfiles/loading2.html';
   // AJAX request to send data to the Flask route
 
 }
 
 
-function restaurantLoad() {
 
-  const url = `http://127.0.0.1:6000/init/restaurant?age=${age}&gender=${gender}&companion=${companion}&requirements=${requirements}&travel_period=${period}`;
-
-
-  $.ajax({
-    type: "POST",
-    url: `${url}`,
-    crossDomain: true,
-    dataType: 'text',
-    contentType: 'plain',
-    async:false,
-    success: function (data) {
-			let forumsListObj = JSON.parse(data);
-      alert(forumsListObj);
-    },
-    error: function () {
-      alert('비동기 처리 오류');
-    } 
-    });
-}
-
-$(document).keypress(function (e) {
-    if (e.which == 13) {
-        bot();
-        questionNum++;
-    }
-});
 function btnCheck() {
   btns = document.querySelectorAll('.btn');
 

@@ -1,25 +1,32 @@
 
-const receivedData = location.href.split('?')[1];
-var text = decodeURI(receivedData);
+var age = localStorage.getItem("age")
+var choice = localStorage.getItem("choice")
+var gender = localStorage.getItem("gender")
+var companion = localStorage.getItem("companion")
+var requirements = localStorage.getItem("requirements")
+var period = localStorage.getItem("period")
 
-const url = `http://127.0.0.1:5000?user_id=111&user_request=${text}`;
+const url = `http://127.0.0.1:5000/init?age=${age}&choice=${choice}&gender=${gender}&companion=${companion}&requirements=${requirements}&travel_period=${period}`;
+alert(url);
+
 $.ajax({
   type: "POST",
   url: `${url}`,
   crossDomain: true,
   dataType: 'text',
   contentType: 'plain',
-  timeout: 200000,
+  
   success: function (data) {
+    alert(data);
     var jdata = JSON.parse(data);
-    var encodedData = encodeURIComponent(JSON.stringify(jdata));
-    location.href = `./first.html?${encodedData}`;
-    
+    localStorage.setItem('encodedData',encodeURIComponent(JSON.stringify(jdata)));
+    location.href = `../mainfiles/first.html`;
   },
   error: function () {
     alert('비동기 처리 오류');
   } 
-  });
+});
+
 
 
 

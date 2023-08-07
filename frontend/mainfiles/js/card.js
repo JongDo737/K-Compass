@@ -18,7 +18,7 @@ function restaurantLoad() {
     crossDomain: true,
     dataType: 'text',
     contentType: 'plain',
-    async:false,
+    timeout: 200000,
     success: function (data) {
       forumsItem = ``;
 			let forumsListObj = JSON.parse(data);
