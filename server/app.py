@@ -11,7 +11,7 @@ from flask_cors import CORS
 import numpy as np
 
 # OpenAI GPT API 키
-openai.api_key = "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"
+openai.api_key =
 
 app = Flask(__name__)
 CORS(app)
@@ -47,6 +47,7 @@ def initial_recommend_restaurant():
         return initial_recommend_hotel(age,gender,companion,requirements,travel_period,restaurant_data)
 # 초기 맛집 추천
 def initial_recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data):
+    print('초기 맛집')
     recommendations, restaurant_scores = recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data)
 
     return json.dumps(recommendations, ensure_ascii=False)
@@ -62,12 +63,8 @@ def filter_and_recommend_restaurant(selected_data, age, gender, companion, requi
 # 초기 숙소 추천
 def initial_recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data):
     recommendations, scores = recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data)
-    print(json.dumps(recommendations, ensure_ascii=False))
-
-    user_input = input("추천된 숙소 중 하나를 선택해주세요 (1, 2, 3).\nPlease choose one of the recommended hotels (1, 2, 3): ")
-    selected_index = int(user_input) - 1
-    selected_data = recommendations[selected_index]
-    return selected_data, selected_data['행정구']
+    print('초기 숙소')
+    return json.dumps(recommendations, ensure_ascii=False)
 
 # 행정구별 숙소 추천
 def filter_and_recommend_hotel(selected_data, 행정구, age, gender, companion, requirements, travel_period, accommodations_data):
@@ -80,12 +77,9 @@ def filter_and_recommend_hotel(selected_data, 행정구, age, gender, companion,
 # 초기 관광지 추천
 def initial_recommend_destination(age, gender, companion, requirements, travel_period, travel_data):
     recommendations, scores = recommend_destination(age, gender, companion, requirements, travel_period, travel_data)
-    print(json.dumps(recommendations, ensure_ascii=False))
+    print("초기 관광지")
 
-    user_input = input("추천된 관광지 중 하나를 선택해주세요 (1, 2, 3).\nPlease choose one of the recommended destinations (1, 2, 3): ")
-    selected_index = int(user_input) - 1
-    selected_data = recommendations[selected_index]
-    return selected_data, selected_data['행정구']
+    return json.dumps(recommendations, ensure_ascii=False)
 
 # 행정구별 관광지 추천
 def filter_and_recommend_destination(selected_data, 행정구, age, gender, companion, requirements, travel_period, travel_data):
