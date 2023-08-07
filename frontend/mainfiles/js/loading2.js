@@ -2,7 +2,7 @@
 const receivedData = location.href.split('?')[1];
 var text = decodeURI(receivedData);
 
-const url = `https://b80rsrw2rf.execute-api.us-east-1.amazonaws.com?user_id=111&user_request=${text}`;
+const url = `http://127.0.0.1:5000?user_id=111&user_request=${text}`;
 $.ajax({
   type: "POST",
   url: `${url}`,
@@ -13,7 +13,7 @@ $.ajax({
   success: function (data) {
     var jdata = JSON.parse(data);
     var encodedData = encodeURIComponent(JSON.stringify(jdata));
-    location.href = `../first.html?${encodedData}`;
+    location.href = `./first.html?${encodedData}`;
     
   },
   error: function () {

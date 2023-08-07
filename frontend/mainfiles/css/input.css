@@ -1,18 +1,21 @@
 * {
 	margin: 0;
-	padding: 0 10%;
 }
-
-body {background: -moz-linear-gradient(-45deg, #183850 0, #183850 25%, #192C46 50%, #22254C 75%, #22254C 100%);
+/* 배경
+background: -moz-linear-gradient(-45deg, #183850 0, #183850 25%, #192C46 50%, #22254C 75%, #22254C 100%);
 	background: -webkit-linear-gradient(-45deg, #183850 0, #183850 25%, #192C46 50%, #22254C 75%, #22254C 100%);
 	background-repeat: no-repeat;
   background-attachment: fixed;
+  
+  */
+body {
+    background-color: #83A2E3;
     display: flex;
     height: 80vh;
-    display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
     width: 100%;
+    gap: 100px;
 }
 .imgContainer {
     display: flex;
@@ -21,47 +24,43 @@ body {background: -moz-linear-gradient(-45deg, #183850 0, #183850 25%, #192C46 5
     align-items: center;
     gap: 100px;
 }
+.question {
+    display: flex;
+    margin-bottom: 70px;
+}
 .bot {
-    width: 400px;
+    max-width: 300px;
+    max-height: 500px
+}
+.textContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 100px;
 }
 p {
 	position: relative;
-    left: 300px;
-	max-width: 30em;
-	
+	width: 500px;
 	background-color: #fff;
 	padding: 1.125em 1.5em;
+    border-radius: 0.3rem;
 	font-size: 1.25em;
-	border-radius: 1rem;
     box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
 }
-p::before {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    top: 100%; /* top에서 bottom으로 수정 */
-    left: 1.5em;
-    border: .75rem solid transparent;
-    border-bottom: none; /* border-top에서 border-bottom으로 수정 */
-    border-top-color: #fff; /* border-bottom-color에서 border-top-color로 수정 */
-    filter: drop-shadow(0 0.0625rem 0.0625rem rgba(0, 0, 0, .1)); /* filter 값을 변경하지 않음 */
-  }
-
-
-#output{
-	font-family: sans-serif;
-	color: #323330;
-	font-size:  1.5em;
+.number {
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #192C46;
+    color: white;
 }
-#container {
-	font-family: sans-serif;
-	text-align: center;
-	color: #323330;
+.btnContainer {
+    display: flex;
+    flex-direction: column;
 }
-
-
-input {
+.btn {
     background-color: #eee;
     border: none;
     font-family: sans-serif;
@@ -70,8 +69,15 @@ input {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 30px;
-    width: 500px;
-    margin-top: 200px;
+    font-size: 24px;
+    width: 600px;
+    margin-top: 20px;
+    border-radius: 0.3rem;
+    transition: background-color 0.5s ease; /* 배경색이 부드럽게 변하는 효과를 줍니다. */
+    box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+}
 
+.btn:hover {
+    background-color: #192C46; /* hover 했을 때 배경색이 #192C46으로 변합니다. */
+    color: white;
 }

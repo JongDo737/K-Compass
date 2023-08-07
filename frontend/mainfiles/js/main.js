@@ -15,7 +15,7 @@ $(img).hover(function(){
 
 function clickbtn() {
     const input = document.querySelector('.form-control');
-    location.href = `../loading2.html?${input.value}`;
+    location.href = `./loading2.html?${input.value}`;
 }
 
 (function ($) {
