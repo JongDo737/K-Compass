@@ -81,3 +81,89 @@ p {
     background-color: #192C46; /* hover 했을 때 배경색이 #192C46으로 변합니다. */
     color: white;
 }
+.inputContainer {
+    display: none;
+    justify-content: end;
+    align-items: end;
+    gap: 20px;
+}
+.group { 
+    position:relative; 
+  }
+
+.requireInput{
+    background-color: #eee;
+    border: none;
+    font-family: sans-serif;
+    color: #000;
+    padding: 10px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 24px;
+    width: 430px;
+    border-radius: 0.3rem;
+    height: 38px;
+    transition: background-color 0.5s ease; /* 배경색이 부드럽게 변하는 효과를 줍니다. */
+    box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+  }
+  .requireInput:focus{ outline:none; }
+  
+  /* LABEL ======================================= */
+  label{
+    color:#999; 
+    font-size:18px;
+    font-weight:normal;
+    position:absolute;
+    pointer-events:none;
+    left:5px;
+    top:18px;
+    transition:0.2s ease all; 
+    -moz-transition:0.2s ease all; 
+    -webkit-transition:0.2s ease all;
+  }
+  
+  /* active state */
+  input:focus ~ label, input:valid ~ label 		{
+    top:-20px;
+    font-size:14px;
+    color:#5264AE;
+  }
+  
+
+/* 달력 디자인 */
+.dateContainer {
+    display: none;
+    width: 600px;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+.dateContainer h6 {
+    text-align: center;
+    color: white;
+    font-size: 1.6em;
+    font-weight: 400;
+    margin-bottom: 10px;
+}
+input[type="date"] {
+    background-color: #192C46;
+    padding: 15px;
+    color: #ffffff;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+::-webkit-calendar-picker-indicator{
+    background-color: #ffffff;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+#dateBtn {
+    width: 90px;
+    height: 58px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

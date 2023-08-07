@@ -2,6 +2,10 @@ var questionNum = 0;
 var question = '언어를 선택해 주세요.';
 var number = document.querySelector('.number');
 var output = document.getElementById('output');
+const imgElement = document.querySelector('.bot');
+const dateContainer = document.querySelector('.dateContainer');
+const inputContainer = document.querySelector('.inputContainer');
+    
 typeWriter(question,0)
 
 var nationality = '';
@@ -34,16 +38,20 @@ function bot() {
             <button class="btn">🏨 숙소</button>
         `;
         btnContainer.innerHTML = btnHTML;
+        imgElement.src = './mainfiles/img/ho5.png'; // New image source
         btnCheck();
         timedQuestion();
     } else if (questionNum == 1) {
         question = '나이를 입력해주세요';
         var btnHTML = `
-            <button class="btn">🍱 10대</button>
-            <button class="btn">🌉 20대</button>
-            <button class="btn">🏨 30대</button>
+            <button class="btn">😋 10대</button>
+            <button class="btn">😎 20대</button>
+            <button class="btn">🥳 30대</button>
+            <button class="btn">🥸 중년층</button>
+            <button class="btn">🤠 노년층</button>
         `;
         btnContainer.innerHTML = btnHTML;
+        imgElement.src = './mainfiles/img/ho2.png'; // New image source
         btnCheck();
         timedQuestion();
     } else if (questionNum == 2) {
@@ -53,33 +61,34 @@ function bot() {
         <button class="btn">💁🏼‍♀️ 여자</button>
         `;
         btnContainer.innerHTML = btnHTML;
+        imgElement.src = './mainfiles/img/ho3.png'; // New image source
         btnCheck();
         timedQuestion();
     } else if (questionNum == 3) {
-        question = '동행자가 있으신가요? (있음, 없음)';
+        question = '동행자가 있으신가요?';
         var btnHTML = `
         <button class="btn">🧍🏻 나홀로여행</button>
-        <button class="btn">👫 동행자있음</button>
+        <button class="btn">👯‍♂️ 친구와함께</button>
+        <button class="btn">👫 애인과함께</button>
+        <button class="btn">👨‍👩‍👧‍👦 가족과함께</button>
         `;
         btnContainer.innerHTML = btnHTML;
+        imgElement.src = './mainfiles/img/ho4.png'; // New image source
         btnCheck();
         timedQuestion();
     } else if (questionNum == 4) {
         question = '여행에 필요한 조건이 있으신가요?';
-        var btnHTML = `
-        <button class="btn">🧖🏻‍♀️ 에어컨주의</button>
-        `;
-        btnContainer.innerHTML = btnHTML;
+        btnContainer.innerHTML = "";
+        inputContainer.style.display = 'flex';
+        imgElement.src = './mainfiles/img/ho5.png'; // New image source
         btnCheck();
         timedQuestion();
+        
     } else if (questionNum == 5) {
         question = '마지막으로 여행 기간을 입력해주세요';
-        var btnHTML = `
-        <button class="btn">🍱 7일</button>
-        <button class="btn">🌉 1박2일</button>
-        <button class="btn">🏨 4박5일</button>
-        `;
-        btnContainer.innerHTML = btnHTML;
+        btnContainer.innerHTML = "";
+        inputContainer.style.display = 'none';
+        dateContainer.style.display = 'flex';
         btnCheck();
         timedQuestion();
     } else if (questionNum == 6) {
@@ -120,7 +129,7 @@ function print(){
 
 function restaurantLoad() {
 
-  const url = `http://127.0.0.1:5000/init/restaurant?age=${age}&gender=${gender}&companion=${companion}&requirements=${requirements}&travel_period=${period}`;
+  const url = `http://127.0.0.1:6000/init/restaurant?age=${age}&gender=${gender}&companion=${companion}&requirements=${requirements}&travel_period=${period}`;
 
 
   $.ajax({
@@ -154,7 +163,6 @@ function btnCheck() {
       input = btns[i].textContent.split(' ');
       bot();
       questionNum++;
-      alert(input[1]+questionNum);
       if(questionNum==1) {
         nationality = input[1];
       }
@@ -171,10 +179,13 @@ function btnCheck() {
         companion=input[1];
       }
       else if(questionNum==6) {
-        requirements=input[1];
+        var require = document.querySelector('.requireInput').value;
+        requirements=require;
       }
       else if(questionNum==7) {
-        period=input[1];
+        var start = document.querySelector('.start').value;
+        var end = document.querySelector('.end').value;
+        period=start+'~'+end;
         print();
       }
     }
