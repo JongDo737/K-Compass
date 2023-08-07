@@ -11,7 +11,7 @@ from flask_cors import CORS
 import numpy as np
 
 # OpenAI GPT API 키
-openai.api_key =
+openai.api_key = "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"
 
 app = Flask(__name__)
 CORS(app)
@@ -25,7 +25,7 @@ def test():
     print("test")
     return jsonify(message='Hello from path!')
 
-@app.route('/init/restaurant', methods=['POST'])
+@app.route('/init', methods=['POST'])
 def initial_recommend_restaurant():
     age = request.args.get('age')
     choice = request.args.get('choice')
@@ -39,63 +39,105 @@ def initial_recommend_restaurant():
     print("Companion:", companion)
     print("Requirements:", requirements)
     print("Travel Period:", travel_period)
-    return initial_recommend_restaurant(age,gender,companion,requirements,travel_period,restaurant_data,0)
-
+    if choice == '맛집':
+        return initial_recommend_restaurant(age,gender,companion,requirements,travel_period,restaurant_data)
+    elif choice == '관광지':
+        return initial_recommend_destination(age,gender,companion,requirements,travel_period,restaurant_data)
+    else:
+        return initial_recommend_hotel(age,gender,companion,requirements,travel_period,restaurant_data)
 # 초기 맛집 추천
-def initial_recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data, offset=0):
-    recommendations, scores = recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data, offset)
+def initial_recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data):
+    recommendations, restaurant_scores = recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data)
+
     return json.dumps(recommendations, ensure_ascii=False)
-
-# 초기 관광지 추천
-def initial_recommend_destination(age, gender, companion, requirements, travel_period, travel_data, offset=0):
-    recommendations, scores = recommend_destination(age, gender, companion, requirements, travel_period, travel_data, offset)
-    print(json.dumps(recommendations, ensure_ascii=False))
-    user_input = input("추천된 관광지 중 하나를 선택해주세요 (1, 2, 3). 더 많은 옵션을 원하시면 '###'를 입력해주세요.\nPlease choose one of the recommended destinations (1, 2, 3) or enter '###' for more options: ")
-    if user_input == '###':
-        offset += 3
-        return initial_recommend_destination(age, gender, companion, requirements, travel_period, travel_data, offset)
-    selected_index = int(user_input) - 1
-    selected_data = recommendations[selected_index]
-    return selected_data
-
-# 초기 숙소 추천
-def initial_recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data, offset=0):
-    recommendations, scores = recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data, offset)
-    print(json.dumps(recommendations, ensure_ascii=False))
-    user_input = input("추천된 호텔 중 하나를 선택해주세요 (1, 2, 3). 더 많은 옵션을 원하시면 '###'를 입력해주세요.\nPlease choose one of the recommended hotels (1, 2, 3) or enter '###' for more options: ")
-    if user_input == '###':
-        offset += 3
-        return initial_recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data, offset)
-    selected_index = int(user_input) - 1
-    selected_data = recommendations[selected_index]
-    return selected_data
-
 # 행정구별 맛집 추천
 def filter_and_recommend_restaurant(selected_data, age, gender, companion, requirements, travel_period, restaurant_data):
-    filtered_data = restaurant_data[restaurant_data['행정구'] == selected_data['행정구']]
+    행정구 = selected_data['행정구']
+    filtered_data = restaurant_data[restaurant_data['행정구'] == 행정구]
     if len(filtered_data) < 3:
         filtered_data = restaurant_data
-    recommendations, scores = recommend_restaurant(age, gender, companion, requirements, travel_period, filtered_data, offset=0)
-    return recommendations
+    recommendations, restaurant_scores = recommend_restaurant(age, gender, companion, requirements, travel_period, filtered_data)
+    return recommendations, restaurant_scores
 
-# 행정구별 관광지 추천
-def filter_and_recommend_destination(selected_data, age, gender, companion, requirements, travel_period, travel_data):
-    filtered_data = travel_data[travel_data['행정구'] == selected_data['행정구']]
-    if len(filtered_data) < 3:
-        filtered_data = travel_data
-    recommendations, scores = recommend_destination(age, gender, companion, requirements, travel_period, filtered_data, offset=0)
-    return recommendations
+# 초기 숙소 추천
+def initial_recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data):
+    recommendations, scores = recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data)
+    print(json.dumps(recommendations, ensure_ascii=False))
+
+    user_input = input("추천된 숙소 중 하나를 선택해주세요 (1, 2, 3).\nPlease choose one of the recommended hotels (1, 2, 3): ")
+    selected_index = int(user_input) - 1
+    selected_data = recommendations[selected_index]
+    return selected_data, selected_data['행정구']
 
 # 행정구별 숙소 추천
-def filter_and_recommend_hotel(selected_data, age, gender, companion, requirements, travel_period, accommodations_data):
-    filtered_data = accommodations_data[accommodations_data['행정구'] == selected_data['행정구']]
+def filter_and_recommend_hotel(selected_data, 행정구, age, gender, companion, requirements, travel_period, accommodations_data):
+    filtered_data = accommodations_data[accommodations_data['행정구'] == 행정구]
     if len(filtered_data) < 3:
         filtered_data = accommodations_data
-    recommendations, scores = recommend_hotel(age, gender, companion, requirements, travel_period, filtered_data, offset=0)
+    recommendations, scores = recommend_hotel(age, gender, companion, requirements, travel_period, filtered_data)
     return recommendations
 
+# 초기 관광지 추천
+def initial_recommend_destination(age, gender, companion, requirements, travel_period, travel_data):
+    recommendations, scores = recommend_destination(age, gender, companion, requirements, travel_period, travel_data)
+    print(json.dumps(recommendations, ensure_ascii=False))
 
+    user_input = input("추천된 관광지 중 하나를 선택해주세요 (1, 2, 3).\nPlease choose one of the recommended destinations (1, 2, 3): ")
+    selected_index = int(user_input) - 1
+    selected_data = recommendations[selected_index]
+    return selected_data, selected_data['행정구']
 
+# 행정구별 관광지 추천
+def filter_and_recommend_destination(selected_data, 행정구, age, gender, companion, requirements, travel_period, travel_data):
+    filtered_data = travel_data[travel_data['행정구'] == 행정구]
+    if len(filtered_data) < 3:
+        filtered_data = travel_data
+    recommendations, scores = recommend_destination(age, gender, companion, requirements, travel_period, filtered_data)
+    return recommendations
+
+# # 초기 맛집 추천
+# def initial_recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data):
+#     print("초기 맛집 추천")
+#     recommendations = recommend_restaurant(age, gender, companion, requirements, travel_period, restaurant_data)
+#     return json.dumps(recommendations, ensure_ascii=False)
+#
+# # 초기 관광지 추천
+# def initial_recommend_destination(age, gender, companion, requirements, travel_period, travel_data):
+#     print("초기 관광지 추천")
+#     recommendations, scores = recommend_destination(age, gender, companion, requirements, travel_period, travel_data)
+#     return json.dumps(recommendations, ensure_ascii=False)
+#
+# # 초기 숙소 추천
+# def initial_recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data):
+#     print("초기 숙소 추천")
+#     recommendations, scores = recommend_hotel(age, gender, companion, requirements, travel_period, accommodations_data)
+#     return json.dumps(recommendations, ensure_ascii=False)
+#
+# # 행정구별 맛집 추천
+# def filter_and_recommend_restaurant(selected_data, age, gender, companion, requirements, travel_period, restaurant_data):
+#     filtered_data = restaurant_data[restaurant_data['행정구'] == selected_data['행정구']]
+#     if len(filtered_data) < 3:
+#         filtered_data = restaurant_data
+#     recommendations = recommend_restaurant(age, gender, companion, requirements, travel_period, filtered_data)
+#     return recommendations
+#
+#
+# # 행정구별 관광지 추천
+# def filter_and_recommend_destination(selected_data, age, gender, companion, requirements, travel_period, travel_data):
+#     filtered_data = travel_data[travel_data['행정구'] == selected_data['행정구']]
+#     if len(filtered_data) < 3:
+#         filtered_data = travel_data
+#     recommendations, scores = recommend_destination(age, gender, companion, requirements, travel_period, filtered_data)
+#     return recommendations
+#
+#
+# # 행정구별 숙소 추천
+# def filter_and_recommend_hotel(selected_data, age, gender, companion, requirements, travel_period, accommodations_data):
+#     filtered_data = accommodations_data[accommodations_data['행정구'] == selected_data['행정구']]
+#     if len(filtered_data) < 3:
+#         filtered_data = accommodations_data
+#     recommendations, scores = recommend_hotel(age, gender, companion, requirements, travel_period, filtered_data)
+#     return recommendations
 
 ####################################################################################################################################################
 
@@ -174,28 +216,38 @@ def recommend_restaurant(age, gender, companion, requirements, travel_period, re
     for i, (score, image_link, restaurant_name) in enumerate(top_3_restaurants):
         recommendation = {
             'Rank': i + 1,
-            'Score(적합도 점수)': score,
-            'Recommendation reason(추천 이유)': recommendation_reasons[i],
+            'Score': score,
+            'Recommendation_reason': recommendation_reasons[i],
             '행정구': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, '행정구'].values[0],
             'image_link': image_link,
 
 
             'Restaurant': restaurant_name,
-            'Restaurant Description': restaurant_description,
-            'Restaurant Review Sentiment Score': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Sentiment_Score'].values[0],
-            'Restaurant Review Counts': int(restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Counts'].values[0]),
+            'Restaurant_Description': restaurant_description,
+            'Restaurant_Review_Sentiment_Score': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Sentiment_Score'].values[0],
+            'Restaurant_Review_Counts': int(restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Counts'].values[0]),
             'Restaurant_Type': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Type'].values[0],
             'Address': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, '주소'].values[0],
-            'Detailed_Directions': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Detailed_Directions'].values[0] if 'Restaurant_Detailed_Directions' in restaurant_data.columns else None,
+            'Detailed_Directions': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Detailed_Directions'].values[0],
 
             '레스토랑명': restaurant_name_ko,
-            '음식점 설명': restaurant_description_ko,
-            '리뷰 감성점수': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Sentiment_Score'].values[0],
-            '리뷰 수': int(restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Counts'].values[0]),
-            '가게 카테고리': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Type_ko'].values[0],
+            '음식점_설명': restaurant_description_ko,
+            '리뷰_감성점수': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Sentiment_Score'].values[0],
+            '리뷰_수': int(restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Review_Counts'].values[0]),
+            '가게_카테고리': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Type_ko'].values[0],
             '주소': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, '주소_ko'].values[0],
-            '찾아오는 길': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Detailed_Directions_ko'].values[0] if 'Restaurant_Detailed_Directions' in restaurant_data.columns else None
+            '찾아오는_길': restaurant_data.loc[restaurant_data['Restaurant_name'] == restaurant_name, 'Restaurant_Detailed_Directions_ko'].values[0]
+
+
+
         }
+        # NaN 제거하는 코드
+        if pd.isna(recommendation.get("Detailed_Directions")):
+            print(recommendation.get("Detailed_Directions"))
+            recommendation['Detailed_Directions'] = ''
+        if pd.isna(recommendation.get('찾아오는_길')):
+            recommendation['찾아오는_길'] = ''
+
         restaurant_recommendations.append(recommendation)
 
     return restaurant_recommendations, restaurant_scores
@@ -274,43 +326,43 @@ def recommend_destination(age, gender, companion, requirements, travel_period, t
     for i, (score, image_link, destination_name) in enumerate(top_3_destinations):
         recommendation = {
             'Rank': i + 1,
-            'Score(적합도 점수)': score,
-            'Recommendation reason(추천 이유)': recommendation_reasons[i],
+            'Score': score,
+            'Recommendation_reason': recommendation_reasons[i],
             '행정구': travel_data.loc[travel_data['여행지명'] == destination_name, '행정구'].values[0],
-            'image link': image_link,
+            'image_link': image_link,
 
-            'Tourist destination': destination_name,
-            'Destination description': destination_description,
-            'Destination Type': travel_data.loc[travel_data['여행지명'] == destination_name, '유형'].values[0],
-            'Destination Sentiment Score': travel_data.loc[travel_data['여행지명'] == destination_name, '감성점수'].values[0],
-            'Destination Review Counts': int(travel_data.loc[travel_data['여행지명'] == destination_name, '총 리뷰 수'].values[0]),
+            'Tourist_destination': destination_name,
+            'Destination_description': destination_description,
+            'Destination_Type': travel_data.loc[travel_data['여행지명'] == destination_name, '유형'].values[0],
+            'Destination_Sentiment_Score': travel_data.loc[travel_data['여행지명'] == destination_name, '감성점수'].values[0],
+            'Destination_Review_Counts': int(travel_data.loc[travel_data['여행지명'] == destination_name, '총 리뷰 수'].values[0]),
             'Address': travel_data.loc[travel_data['여행지명'] == destination_name, '주소'].values[0],
-            'Detailed Directions': travel_data.loc[travel_data['여행지명'] == destination_name, '찾아오는 길'].values[0],
-            'Opening hours': travel_data.loc[travel_data['여행지명'] == destination_name, '개장시간'].values[0],
-            'Days off': travel_data.loc[travel_data['여행지명'] == destination_name, '휴무일'].values[0],
-            'Operating hours': travel_data.loc[travel_data['여행지명'] == destination_name, '이용 시간'].values[0],
-            'Parking availability': travel_data.loc[travel_data['여행지명'] == destination_name, '주차장 유무_ko'].values[0],
-            'Stroller rental': travel_data.loc[travel_data['여행지명'] == destination_name, '유모차 대여'].values[0],
-            'Pets allowed': travel_data.loc[travel_data['여행지명'] == destination_name, '애완동물 동반'].values[0],
-            'Detailed information': travel_data.loc[travel_data['여행지명'] == destination_name, '상세정보'].values[0],
-            'Parking fee': travel_data.loc[travel_data['여행지명'] == destination_name, '주차요금'].values[0],
-            'Usage fee': travel_data.loc[travel_data['여행지명'] == destination_name, '이용료'].values[0],
-            'Discount information': travel_data.loc[travel_data['여행지명'] == destination_name, '할인정보'].values[0],
+            'Detailed_Directions': travel_data.loc[travel_data['여행지명'] == destination_name, '찾아오는 길'].values[0],
+            'Opening_hours': travel_data.loc[travel_data['여행지명'] == destination_name, '개장시간'].values[0],
+            'Days_off': travel_data.loc[travel_data['여행지명'] == destination_name, '휴무일'].values[0],
+            'Operating_hours': travel_data.loc[travel_data['여행지명'] == destination_name, '이용 시간'].values[0],
+            'Parking_availability': travel_data.loc[travel_data['여행지명'] == destination_name, '주차장 유무_ko'].values[0],
+            'Stroller_rental': travel_data.loc[travel_data['여행지명'] == destination_name, '유모차 대여'].values[0],
+            'Pets_allowed': travel_data.loc[travel_data['여행지명'] == destination_name, '애완동물 동반'].values[0],
+            'Detailed_information': travel_data.loc[travel_data['여행지명'] == destination_name, '상세정보'].values[0],
+            'Parking_fee': travel_data.loc[travel_data['여행지명'] == destination_name, '주차요금'].values[0],
+            'Usage_fee': travel_data.loc[travel_data['여행지명'] == destination_name, '이용료'].values[0],
+            'Discount_information': travel_data.loc[travel_data['여행지명'] == destination_name, '할인정보'].values[0],
 
 
             '여행지': travel_data.loc[travel_data['여행지명'] == destination_name, '여행지명_ko'].values[0],
-            '여행지 설명': travel_data.loc[travel_data['여행지명'] == destination_name, '여행지 설명_ko'].values[0],
+            '여행지_설명': travel_data.loc[travel_data['여행지명'] == destination_name, '여행지 설명_ko'].values[0],
             '카테고리': travel_data.loc[travel_data['여행지명'] == destination_name, '유형_ko'].values[0],
-            '여행지 감성 점수': travel_data.loc[travel_data['여행지명'] == destination_name, '감성점수'].values[0],
-            '여행지 리뷰 수': int(travel_data.loc[travel_data['여행지명'] == destination_name, '총 리뷰 수'].values[0]),
+            '여행지_감성_점수': travel_data.loc[travel_data['여행지명'] == destination_name, '감성점수'].values[0],
+            '여행지_리뷰_수': int(travel_data.loc[travel_data['여행지명'] == destination_name, '총 리뷰 수'].values[0]),
             '주소': travel_data.loc[travel_data['여행지명'] == destination_name, '주소_ko'].values[0],
-            '찾아오는 길': travel_data.loc[travel_data['여행지명'] == destination_name, '찾아오는 길_ko'].values[0],
+            '찾아오는_길': travel_data.loc[travel_data['여행지명'] == destination_name, '찾아오는 길_ko'].values[0],
             '개장시간': travel_data.loc[travel_data['여행지명'] == destination_name, '개장시간_ko'].values[0],
             '휴무일': travel_data.loc[travel_data['여행지명'] == destination_name, '휴무일_ko'].values[0],
-            '이용 시간': travel_data.loc[travel_data['여행지명'] == destination_name, '이용 시간_ko'].values[0],
-            '주차장 유무': travel_data.loc[travel_data['여행지명'] == destination_name, '주차장 유무_ko'].values[0],
-            '유모차 대여': travel_data.loc[travel_data['여행지명'] == destination_name, '유모차 대여_ko'].values[0],
-            '애완동물 동반': travel_data.loc[travel_data['여행지명'] == destination_name, '애완동물 동반_ko'].values[0],
+            '이용_시간': travel_data.loc[travel_data['여행지명'] == destination_name, '이용 시간_ko'].values[0],
+            '주차장_유무': travel_data.loc[travel_data['여행지명'] == destination_name, '주차장 유무_ko'].values[0],
+            '유모차_대여': travel_data.loc[travel_data['여행지명'] == destination_name, '유모차 대여_ko'].values[0],
+            '애완동물_동반': travel_data.loc[travel_data['여행지명'] == destination_name, '애완동물 동반_ko'].values[0],
             '상세정보': travel_data.loc[travel_data['여행지명'] == destination_name, '상세정보_ko'].values[0],
             '주차요금': travel_data.loc[travel_data['여행지명'] == destination_name, '주차요금_ko'].values[0],
             '이용료': travel_data.loc[travel_data['여행지명'] == destination_name, '이용료_ko'].values[0],
@@ -395,33 +447,32 @@ def recommend_hotel(age, gender, companion, requirements, travel_period, accommo
     for i, (score, image_link, hotel_name) in enumerate(top_3_hotels):
         recommendation = {
             'Rank': i + 1,
-            'Score(적합도 점수)': score,
-            'Recommendation reason(추천 이유)': recommendation_reasons[i],
+            'Score': score,
+            'Recommendation_reason': recommendation_reasons[i],
             '행정구': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, '행정구'].values[0],
-            'image link': image_link,
+            'image_link': image_link,
 
-            'Hotel Name': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Name'].values[0],
-            'Hotel Description': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Description'].values[0],
-            'Hotel Sentiment Score': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Sentiment_Score'].values[0],
-            'Star rating': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Star_rating'].values[0],
-            'Hotel Ratings': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Ratings'].values[0],
-            'Hotel Review Counts': int(accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Review_Counts'].values[0]),
-            'Hotel address': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_address'].values[0],
-            'Hotel Directions': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Directions'].values[0],
+            'Hotel_Name': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Name'].values[0],
+            'Hotel_Description': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Description'].values[0],
+            'Hotel_Sentiment Score': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Sentiment_Score'].values[0],
+            'Star_rating': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Star_rating'].values[0],
+            'Hotel_Ratings': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Ratings'].values[0],
+            'Hotel_Review_Counts': int(accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Review_Counts'].values[0]),
+            'Hotel_address': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_address'].values[0],
+            'Hotel_Directions': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Directions'].values[0],
 
             '호텔명': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Name_ko'].values[0],
-            '호텔 소개': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Description_ko'].values[0],
-            '호텔 감성 점수': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Sentiment_Score'].values[0],
-            '호텔 등급': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Star_rating_ko'].values[0],
-            '호텔 점수': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Ratings_ko'].values[0],
-            '호텔 리뷰 수': int(accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Review_Counts'].values[0]),
+            '호텔_소개': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Description_ko'].values[0],
+            '호텔_감성_점수': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Sentiment_Score'].values[0],
+            '호텔_등급': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Star_rating_ko'].values[0],
+            '호텔_점수': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Ratings_ko'].values[0],
+            '호텔_리뷰_수': int(accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Review_Counts'].values[0]),
             '주소': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_address_ko'].values[0],
-            '찾아오는 길': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Directions_ko'].values[0],
+            '찾아오는_길': accommodations_data.loc[accommodations_data['Hotel_Name'] == hotel_name, 'Hotel_Directions_ko'].values[0],
         }
         hotel_recommendations.append(recommendation)
 
     return hotel_recommendations, hotel_scores
-
 
 if __name__ == '__main__':
     app.run(debug=True)
