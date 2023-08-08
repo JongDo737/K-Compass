@@ -10,9 +10,6 @@ import pandas as pd
 from flask_cors import CORS
 import numpy as np
 
-# OpenAI GPT API 키
-openai.api_key = ""
-
 app = Flask(__name__)
 CORS(app)
 
@@ -33,6 +30,11 @@ def initial_recommend():
     companion = request.args.get('companion')
     requirements = request.args.get('requirements')
     travel_period = request.args.get('travel_period')
+    api_key = request.args.get('api_key')
+
+    # OpenAI GPT API 키
+    openai.api_key = api_key
+
     print("Age:", age)
     print("Choice:", choice)
     print("Gender:", gender)
@@ -55,6 +57,11 @@ def filter_recommend():
     companion = request.args.get('companion')
     requirements = request.args.get('requirements')
     travel_period = request.args.get('travel_period')
+    api_key = request.args.get('api_key')
+
+    # OpenAI GPT API 키
+    openai.api_key = api_key
+
     print("Age:", age)
     print("Choice:", choice)
     print("Gender:", gender)
